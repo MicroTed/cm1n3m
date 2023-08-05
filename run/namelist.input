@@ -348,7 +348,7 @@
  &nssl2mom_params
    alphah  = 0,     ! shape parameter of graupel
    alphahl = 0.5,   ! shape parameter of hail
-   ccn     = 2.0e9  ! base ccn concentration
+   ccn     = 0.8e9  ! base ccn concentration (e.g., 0.2e9 for maritime, 0.4e9 for clean continental, max of about 1.5e9 for extreme continental)
    cnor    = 8.e6,  ! for single moment only
    cnoh    = 4.e4,  ! for single moment only
  /
