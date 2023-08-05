@@ -203,7 +203,7 @@ clean:
 adv.o: constants.o input.o pdef.o adv_routines.o
 adv_routines.o: input.o constants.o pdef.o comm.o
 anelp.o: constants.o input.o misclibs.o bc.o poiss.o
-azimavg.o: input.o constants.o cm1libs.o
+azimavg.o: input.o constants.o cm1libs.o comm.o
 base.o: constants.o input.o bc.o comm.o goddard.o cm1libs.o getcape.o
 bc.o: constants.o input.o
 cm1.o: constants.o input.o param.o base.o init3d.o misclibs.o solve.o diff2.o turb.o statpack.o writeout.o restart.o radiation_driver.o radtrns3d.o turbdiag.o azimavg.o hifrq.o parcel.o init_physics.o init_surface.o
@@ -211,7 +211,7 @@ cm1libs.o: input.o constants.o
 comm.o: input.o bc.o
 diff2.o: constants.o input.o
 goddard.o: constants.o input.o cm1libs.o
-hifrq.o: input.o constants.o cm1libs.o
+hifrq.o: input.o constants.o cm1libs.o adv.o
 init3d.o:  constants.o input.o misclibs.o cm1libs.o bc.o comm.o module_mp_nssl_2mom.o poiss.o parcel.o
 init_physics.o: constants.o input.o sfclay.o sfclayrev.o slab.o radtrns3d.o irrad3d.o goddard.o module_ra_rrtmg_lw.o module_ra_rrtmg_sw.o
 init_surface.o: constants.o input.o oml.o
