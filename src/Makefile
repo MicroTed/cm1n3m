@@ -14,6 +14,8 @@
 #LINKOPTS  = -lnetcdf -lnetcdff
 #-----------------------------------------------------------------------------
 
+# Use 'local.mk' file for compile settings so this file stays clean...
+include local.mk
 
 #-----------------------------------------------------------------------------
 #                     HARDWARE SECTION
