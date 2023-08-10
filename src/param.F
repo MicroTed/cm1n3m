@@ -52,7 +52,8 @@
                         iehw,iehlw,     &
                         ehw0,ehlw0,     &
                         dmrauto,        &
-                        ioldlimiter
+                        ioldlimiter,    &
+                        ibinhmlr, ibinhlmlr
       use goddard_module, only : consat,consat2
       use lfoice_module, only : lfoice_init
       implicit none
@@ -141,7 +142,8 @@
                         iehw,iehlw,     &
                         ehw0,ehlw0,     &
                         dmrauto,        &
-                        ioldlimiter
+                        ioldlimiter,    &
+                        ibinhmlr, ibinhlmlr
 
 !--------------------------------------------------------------
 
@@ -526,6 +528,8 @@
       call MPI_BCAST(ehlw0     ,1,MPI_REAL,0,MPI_COMM_WORLD,ierr)
       call MPI_BCAST(dmrauto   ,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       call MPI_BCAST(ioldlimiter,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+      call MPI_BCAST(ibinhmlr  ,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+      call MPI_BCAST(ibinhlmlr ,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       ENDIF
 #endif
 
