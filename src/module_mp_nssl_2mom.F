@@ -546,6 +546,7 @@ MODULE module_mp_nssl_2mom
   integer, public  :: iusedw = 0    ! flag to use experimental wet growth ice diameter for gr -> hl conversion (=1 turns on)
   real   , private  :: dwmin   = 5.0e-3  ! Minimum diameter with iusedw (can stay at 0 or be set to something larger)
   real   , private  :: dwetmin = 5.0e-3  ! Minimum diameter with iusedw (can stay at 0 or be set to something larger)
+  real   , public  :: dwmax  = 15.e-3 ! for ihlcnh, always convert this size and larger whether or not there is wet growth
   real   , public  :: dwtempmin = 242. ! lowest temperature to allow wet growth conversion to hail
   real   , public  :: dwehwmin = 0.   ! Minimum ehw to use to find wet growth diameter (if > ehw0, then wet growth diam becomes smaller)
   real   , public  :: dg0thresh = 0.15 ! graupel wet growth diameter above which we say do not bother
@@ -576,7 +577,7 @@ MODULE module_mp_nssl_2mom
                               ! =  2 DTD mass-weighted version based on MY code
                               ! =  3 Milbrandt version (from Cohard and Pinty code
   integer :: dmropt = 0 ! extra option for crcnw
-  integer :: dmhlopt = 1 ! options for graupel -> conversion
+  integer :: dmhlopt = 0 ! options for graupel -> conversion
   integer :: irescalerainopt = 3 ! 0 = default option
                                  ! 1 = qx(mgs,lc) > qxmin(lc) 
                                  ! 2 = qx(mgs,lc) > qxmin(lc) .and. wvel(mgs) < 3.0
@@ -21599,9 +21600,13 @@ END SUBROUTINE nssl_2mom_driver
                       ENDDO
               ENDIF
               
-              dg0(mgs) = Max( d, dwmin )
+              dg0(mgs) = Min( dwmax, Max( d, dwmin ) )
           ELSE
-            dg0(mgs) = dg0thresh + 0.0001
+            IF ( qx(mgs,lh) > qxmin(lh) .and. qx(mgs,lh) > hlcnhqmin .and. temg(mgs) .le. tfr-2.0  ) THEN
+              dg0(mgs) = dwmax
+            ELSE
+              dg0(mgs) = dg0thresh + 0.0001
+            ENDIF
           ENDIF
           
             IF ( ihlcnh == 3 .and. (qhacw(mgs) + qhacr(mgs))*dtp > qxmin(lh) .and. qx(mgs,lh) > hlcnhqmin &
@@ -21690,8 +21695,8 @@ END SUBROUTINE nssl_2mom_driver
 !            tmp3 = Min( dtp*(qfacw(mgs) + qfacr(mgs) ), qxmxd(mgs,lf) )
             tmp3 = qxmxd(mgs,lh)
             IF (qxd1 > tmp3 ) THEN
-              flim = tmp3/(qxd1)
-              qhlcnh(mgs) = flim*qhlcnh(mgs)
+!              flim = tmp3/(qxd1)
+!              qhlcnh(mgs) = flim*qhlcnh(mgs)
             ENDIF
 
             
@@ -21708,10 +21713,10 @@ END SUBROUTINE nssl_2mom_driver
             chlcnhhl(mgs) = chlcnh(mgs)
 
            IF ( qx(mgs,lhl) > qxmin(lhl) .and. dmhlopt > 0 ) THEN
-             dh0 = rho0(mgs)*qhlcnh(mgs)/chlcnhhl(mgs)
-             IF ( dh0 < xmas(mgs,lhl) ) THEN
+             tmp = rho0(mgs)*qhlcnh(mgs)/chlcnhhl(mgs)
+             IF ( tmp < xmas(mgs,lhl) ) THEN
                ! dh0 = ( qxd1*dh0 + qx(mgs,lhl)*xmas(mgs,lhl))/( qxd1 + qx(mgs,lhl))  ! weighted average
-               dh0 = (( qxd1*dh0**(1./3.) + qx(mgs,lhl)*xmas(mgs,lhl)**(1./3.))/( qxd1 + qx(mgs,lhl)))**3  ! weighted average
+               dh0 = (( qxd1*tmp**(1./3.) + qx(mgs,lhl)*xmas(mgs,lhl)**(1./3.))/( qxd1 + qx(mgs,lhl)))**3  ! weighted average
                chlcnhhl(mgs) = Min( chlcnhhl(mgs), rho0(mgs)*qhlcnh(mgs)/dh0 )
              ELSE
 !               dh0 = Max( dh0, xmas(mgs,lhl) ) ! when enough hail is established, do not dilute the size
